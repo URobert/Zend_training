@@ -70,7 +70,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <h3><a href="/home2" id="R">Romania</a></h3>
+            <h3><a href="/home" id="R">Romania</a></h3>
           </div>
 <?php $isLoggedIn = 1; #this LINE WILL BE DELETED WHEN LOGGIN IN FUNCTIONALITY IS IMPLEMENTED?>
           <?php if ($isLoggedIn): ?>
@@ -86,16 +86,16 @@
                     <a href="/cities/weather" id="weather" class="navTop">Weather Forecast</a></div>
                   </li>
                   <li><div class ="btn-group">
-                    <a href="/home2/search" id="search" class="navTop">Search Location</a></div>
+                    <a href="/home/search" id="search" class="navTop">Search Location</a></div>
                   </li>
                   <li><div class ="btn-group">
-                    <a href="/home2/users" id="users" class="navTop">Users</a></div>
+                    <a href="/home/users" id="users" class="navTop">Users</a></div>
                   </li>
                   <li><div class ="btn-group">
                   <?php if (isset($_SESSION['userId'])): ?>
-                    <a href="/home2/logout" id="logut" class="navTop">Logout</a></div>
+                    <a href="/home/logout" id="logut" class="navTop">Logout</a></div>
                   <?php else: ?>
-                    <a href="/home2/login" id="login" class="navTop">Login</a></div>
+                    <a href="/home/login" id="login" class="navTop">Login</a></div>
                   <?php endif ?>
                   </li>
                 </ul>
