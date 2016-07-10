@@ -10,10 +10,28 @@ class HomeController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        $county = new Application_Model_CountyMapper();
-        $this->view->entries = $county->fetchAll();
+    //Connect to db    
+    $db = new Zend_Db_Adapter_Pdo_Mysql(array(
+    'host'     => '127.0.0.1',
+    'username' => 'root',
+    'password' => 'IamGroot',
+    'dbname'   => 'myDB'
+    ));
+    
+    $sql = 'Select * from county';
+    $result = $db->fetchAll($sql);
+    $this->view->result = $result;
+    
+        
+    $table = new Application_Model_DbTable_County();
+    $county =  $table->fetchRow(
+                $table->select()
+                    ->where('name = ?', 'Brasov')
+               );
+    #var_dump($county->name);
     }
+    
 
-
+    
 }
 

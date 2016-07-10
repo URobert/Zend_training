@@ -19,9 +19,17 @@ class DbTestingController extends Zend_Controller_Action
     'dbname'   => 'myDB'
     ));
         
-    $version = $db->getServerVersion();        
+    $tables =  $db->listTables();        
+    var_dump($tables);
+    echo "<br><br>";
     
-    var_dump($version);        
+    $sql = 'Select * from county';
+    $result = $db->fetchAll($sql);
+    var_dump($result);
+    
+    
+    
     }
     
+
 }
