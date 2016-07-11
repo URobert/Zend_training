@@ -30,6 +30,7 @@
       <modelsDirectory>
         <dbTableDirectory>
           <dbTableFile dbTableName="County"/>
+          <dbTableFile dbTableName="City"/>
         </dbTableDirectory>
         <modelFile modelName="CountyMapper"/>
         <modelFile modelName="County"/>

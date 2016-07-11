@@ -86,4 +86,33 @@ class CountyController extends Zend_Controller_Action
         }
         $this->view->countyName = $countyName;
     }
+    
+    public function deleteAction()
+    {
+        $uri = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
+        $stringResponse = explode("/",$uri);
+        $id = (int) $stringResponse[3];
+                
+        $cityTable = new Application_Model_DbTable_City();
+        $checkForCities = $cityTable->fetchRow(
+            $cityTable->select()
+                ->where('county_id = ?', $id)
+        );
+        if ($checkForCities) {
+            echo "<script>
+                alert('That county can not be deteled. Only empty (without registred cities) counties can be deleted.');
+                window.location.href='/home';
+                </script>";  
+        }else{
+            $table = new Application_Model_DbTable_County();
+            $where = $table->getAdapter()->quoteInto('id = ?', $id);
+            $table->delete($where);
+            echo "<script>
+                    alert('County deleted.');
+                    window.location.href='/home';
+                    </script>";
+        }
+    }    
+    
+    
 }// end of class
