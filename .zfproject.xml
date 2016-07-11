@@ -17,6 +17,12 @@
         <controllerFile controllerName="Home">
           <actionMethod actionName="index"/>
         </controllerFile>
+        <controllerFile controllerName="DbTesting">
+          <actionMethod actionName="index"/>
+        </controllerFile>
+        <controllerFile controllerName="City">
+          <actionMethod actionName="index"/>
+        </controllerFile>
       </controllersDirectory>
       <formsDirectory enabled="false"/>
       <layoutsDirectory>
@@ -27,6 +33,7 @@
       <modelsDirectory>
         <dbTableDirectory>
           <dbTableFile dbTableName="County"/>
+          <dbTableFile dbTableName="City"/>
         </dbTableDirectory>
         <modelFile modelName="CountyMapper"/>
         <modelFile modelName="County"/>
@@ -45,6 +52,12 @@
             <viewScriptFile forActionName="index"/>
           </viewControllerScriptsDirectory>
           <viewControllerScriptsDirectory forControllerName="Home">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="DbTesting">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="City">
             <viewScriptFile forActionName="index"/>
           </viewControllerScriptsDirectory>
         </viewScriptsDirectory>

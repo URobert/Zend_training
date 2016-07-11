@@ -1,6 +1,6 @@
 <?php
 
-class HomeController extends Zend_Controller_Action
+class DbTestingController extends Zend_Controller_Action
 {
 
     public function init()
@@ -10,6 +10,7 @@ class HomeController extends Zend_Controller_Action
 
     public function indexAction()
     {
+        // action body
     //Connect to db    
     $db = new Zend_Db_Adapter_Pdo_Mysql(array(
     'host'     => '127.0.0.1',
@@ -17,21 +18,18 @@ class HomeController extends Zend_Controller_Action
     'password' => 'IamGroot',
     'dbname'   => 'myDB'
     ));
+        
+    $tables =  $db->listTables();        
+    var_dump($tables);
+    echo "<br><br>";
     
     $sql = 'Select * from county';
     $result = $db->fetchAll($sql);
-    $this->view->result = $result;
+    var_dump($result);
     
-        
-    $table = new Application_Model_DbTable_County();
-    $county =  $table->fetchRow(
-                $table->select()
-                    ->where('name = ?', 'Brasov')
-               );
-    #var_dump($county->name);
+    
+    
     }
     
 
-    
 }
-
