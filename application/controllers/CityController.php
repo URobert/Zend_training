@@ -104,6 +104,10 @@ class CityController extends Zend_Controller_Action
 
     }
     
+    public function currentweatherAction(){
+        
+    }
+    
 
 }
 
