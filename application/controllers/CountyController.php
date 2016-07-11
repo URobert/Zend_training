@@ -53,4 +53,37 @@ class CountyController extends Zend_Controller_Action
            }
         }//end of POST method check
     }
-}
+    
+    public function getCounty($id){
+        $table = new Application_Model_DbTable_County();
+        $county =  $table->fetchRow(
+                    $table->select()
+                        ->where('id = ?', $id)
+                   );
+        return $county;    
+    }
+    
+    public function editAction()
+    {
+        $uri = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
+        $stringResponse = explode("/",$uri);
+        $id = (int) $stringResponse[3];
+        $countyName = $this->getCounty($id)->name;
+        
+        //UPDATE COUNTY NAME IN DB
+        if ( $this->getRequest()->isPost() ) {
+            $countyName = $this->getRequest()->getPost('name');
+            $table = new Application_Model_DbTable_County();
+            $data = array('name' => "$countyName" );
+            $where = $table->getAdapter()->quoteInto('id = ?', $id);
+            $table->update($data, $where);
+            
+            echo "<script>
+            alert('County successfully updated.');
+            window.location.href='/home';
+            </script>";
+             
+        }
+        $this->view->countyName = $countyName;
+    }
+}// end of class
