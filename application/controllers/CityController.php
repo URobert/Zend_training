@@ -39,6 +39,11 @@ class CityController extends Zend_Controller_Action
         return $county_id;
     }
     
+    public function currentweatherAction()
+    {
+        //page built in JS, all code available in view
+    }
+    
     public function listAction()
     {
         $county_id = $this->getCountyId();
@@ -148,6 +153,8 @@ class CityController extends Zend_Controller_Action
     
     public function searchAction()
     {
+		$mapid = $this->getRequest()->mapid;
+        
         $listInDB = array();
         $searchTerm = $this->getRequest()->getPost('userSearch');
         if (!null == $searchTerm) {
@@ -157,12 +164,19 @@ class CityController extends Zend_Controller_Action
                     ->where('name LIKE ?', $searchTerm)
             );
             
-            foreach ($result as $city){
-                $listInDB [] = $city[0]['name'];
-            }
+
+            //foreach ($result as $city){
+            //    $listInDB [] = [ 'id' => $city[0]['id'], 'name' => $city[0]['name'] ];
+            //}
             
-            var_dump($result);
-            exit;
+
+            
+            $this->view->mapid = $mapid;
+            $this->view->realCityList = $listInDB;
+            
+            #var_dump($result);
+            var_dump($mapid);
+            var_dump($listInDB);
         }
         //    $realCitites = \ORM::for_table('city')
         //        ->select_many('id', 'name')
@@ -178,9 +192,7 @@ class CityController extends Zend_Controller_Action
     
     
     
-    public function currentweatherAction(){
-        
-    }
+
     
 
 }

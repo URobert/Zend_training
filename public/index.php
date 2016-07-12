@@ -38,5 +38,14 @@ $router->addRoute('weather.list', new Zend_Controller_Router_Route(
 		'action' => 'list'
 	)
 ));
+
+$router->addRoute('city.search', new Zend_Controller_Router_Route(
+	'city/search/:mapid',
+	array(
+		'controller' => 'city',
+		'action' => 'search'
+	)
+));
+
 $application->bootstrap()
             ->run();
