@@ -39,9 +39,13 @@ class CityController extends Zend_Controller_Action
         return $county_id;
     }
     
+    public function currentweatherAction()
+    {
+        //page built in JS, all code available in view
+    }
+    
     public function listAction()
     {
-
         $county_id = $this->getCountyId();
         //GET LIST OF CITIES
         $cityTable = new Application_Model_DbTable_City();
@@ -83,7 +87,6 @@ class CityController extends Zend_Controller_Action
                     $addNewCity->name = $cityName;
                     $addNewCity->county_id = $county_id;
                     $addNewCity->save();
-                    #echo "<script>window.location.href='/home'</script>";
                }
             
            }
@@ -103,6 +106,93 @@ class CityController extends Zend_Controller_Action
         </script>";
 
     }
+    
+    public function mapAction()
+    {
+        //PICK LIST OF CITIES TO CHECK WITH THE API
+        $listofCities [] = ['Oradea', 'Beius', 'Alesd', 'Nucet', 'Brasov', 'Bucuresti', 'London', 'Timisoara'];
+        $appId = '01ffc2b8227e5302ffa7f8555ba7738e';
+        $cityAndTemp = array();
+
+        //Getting DB cities and obtaining differences between request and db cities
+        $citiesInDB = new Application_Model_DbTable_CityMap();
+        $result = $citiesInDB->fetchAll();
+        foreach ($result as $row) {
+            $listInDB [] = $row['name'];
+        }
+        $diffToImport = array_diff($listofCities[0], $listInDB);
+        
+        foreach ($diffToImport as $city) {
+        $cityTable = new Application_Model_DbTable_City();        
+        $addNewCity = $cityTable->fetchNew();
+        $addNewCity->name = $city;
+        $addNewCity->source_id = 1;
+        $addNewCity->save();
+        }
+        
+        $completeList = $citiesInDB->fetchAll(
+                $citiesInDB->select()
+                        ->order('name ASC')
+                );
+        
+        foreach ($completeList as $city) {
+            $allCities [] = ['name' => $city['name'], 'source_id' => $city['source_id'], 'id' => $city['id'], 'city_id' => $city['city_id']];
+        }
+        
+        //API CALL
+        foreach ($allCities as $city) {
+            $responseJson = file_get_contents('http://api.openweathermap.org/data/2.5/weather?q='.$city['name'].'&APPID='.$appId.'&units=metric');
+            $response = json_decode($responseJson);
+            if ($response->cod == 200) {
+                $cityAndTemp [] = ['city' => $response->name, 'temp' => $response->main->temp, 'source_id' => $city['source_id'], 'id' => $city['id'], 'city_id' => $city['city_id']];
+            }
+        }
+        $this->view->cityAndTemp = $cityAndTemp;
+    }
+    
+    
+    public function searchAction()
+    {
+		$mapid = $this->getRequest()->mapid;
+        
+        $listInDB = array();
+        $searchTerm = $this->getRequest()->getPost('userSearch');
+        if (!null == $searchTerm) {
+            $realCities = new Application_Model_DbTable_City();
+            $result = $realCities->fetchAll(
+                  $realCities->select()
+                    ->where('name LIKE ?', $searchTerm)
+            );
+            
+
+            //foreach ($result as $city){
+            //    $listInDB [] = [ 'id' => $city[0]['id'], 'name' => $city[0]['name'] ];
+            //}
+            
+
+            
+            $this->view->mapid = $mapid;
+            $this->view->realCityList = $listInDB;
+            
+            #var_dump($result);
+            var_dump($mapid);
+            var_dump($listInDB);
+        }
+        //    $realCitites = \ORM::for_table('city')
+        //        ->select_many('id', 'name')
+        //        ->where_like('name', $request->get('userSearch'))
+        //        ->find_many();
+        //    foreach ($realCitites as $city) {
+        //        $listInDB [] = $city;
+        //    }
+        //}
+        //
+        //return $this->render(['mapid' => $request->get('mapid'), 'realCityList' => $listInDB]);
+    }
+    
+    
+    
+
     
 
 }

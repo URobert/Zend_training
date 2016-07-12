@@ -22,5 +22,46 @@ $application = new Zend_Application(
     APPLICATION_ENV,
     APPLICATION_PATH . '/configs/application.ini'
 );
+
+$router = Zend_Controller_Front::getInstance()->getRouter();
+$router->addRoute('county.edit', new Zend_Controller_Router_Route(
+	'county/edit/:id',
+	array(
+		'controller' => 'county',
+		'action' => 'edit'
+	)
+));
+$router->addRoute('weather.list', new Zend_Controller_Router_Route(
+	'city/weather',
+	array(
+		'controller' => 'weatherforecast',
+		'action' => 'list'
+	)
+));
+
+$router->addRoute('weather.import', new Zend_Controller_Router_Route(
+	'weather/weatherImport',
+	array(
+		'controller' => 'weatherforecast',
+		'action' => 'import'
+	)
+));
+
+$router->addRoute('city.search', new Zend_Controller_Router_Route(
+	'city/search/:mapid',
+	array(
+		'controller' => 'city',
+		'action' => 'search'
+	)
+));
+
+$router->addRoute('home.search', new Zend_Controller_Router_Route(
+	'/home/search',
+	array(
+		'controller' => 'searchlocation',
+		'action' => 'search'
+	)
+));
+
 $application->bootstrap()
             ->run();
