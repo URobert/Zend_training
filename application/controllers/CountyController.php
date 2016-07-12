@@ -65,14 +65,14 @@ class CountyController extends Zend_Controller_Action
     
     public function editAction()
     {
-        $uri = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
-        $stringResponse = explode("/",$uri);
-        $id = (int) $stringResponse[3];
+        $request = $this->getRequest();
+        
+        $id = (int) $request->get('id');
         $countyName = $this->getCounty($id)->name;
         
         //UPDATE COUNTY NAME IN DB
         if ( $this->getRequest()->isPost() ) {
-            $countyName = $this->getRequest()->getPost('name');
+            $countyName = $request->getPost('name');
             $table = new Application_Model_DbTable_County();
             $data = array('name' => "$countyName" );
             $where = $table->getAdapter()->quoteInto('id = ?', $id);
