@@ -55,5 +55,13 @@ $router->addRoute('city.search', new Zend_Controller_Router_Route(
 	)
 ));
 
+$router->addRoute('home.search', new Zend_Controller_Router_Route(
+	'/home/search',
+	array(
+		'controller' => 'searchlocation',
+		'action' => 'search'
+	)
+));
+
 $application->bootstrap()
             ->run();
