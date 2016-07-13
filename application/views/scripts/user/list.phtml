@@ -1,0 +1,88 @@
+<style>
+    thead{
+        background:#00E5EE;
+        font-weight:500;
+        border-bottom:solid;
+        border-color:black;
+    }
+    
+    .city_id, .source_id{
+        max-width:100px;
+        background:gray;
+    }
+    .myform {
+        margin-top:25px;
+    }
+    #importUpdate{
+        float:right;
+    }
+</style>
+
+<div class="container containerF">
+    <div class="col-md-12 myform">
+    <form action="/home/users" method="get">
+    User:<input type="text" name="username" value="<?php echo $this->username; ?>"/>
+    Email:<input type="text" name="email" value="<?php echo $this->email; ?>" />
+    Status:
+    <select name="status">
+        <option value="">all</option>
+        <option value="1" <?php if ($this->status == '1') {
+    echo 'selected';
+}?>>active</option>
+        <option value="0" <?php if ($this->status == '0') {
+    echo 'selected';
+}?>>inactive</option>
+    </select>
+    <input type="submit" name="SeachUser" value="Search" class="btn btn-primary"/>
+    </form>
+    </div>
+</div>
+
+<div class ="container">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <caption>Users</caption>
+                <thead>
+                    <th class="col-md-1">#</th>
+                    <th class="col-md-3">User</th>
+                    <th class="col-md-3">Email</th>
+                    <th class="col-md-2">Status</th>                         
+                </thead>
+            <?php $i = 1; foreach ($this->users as $entry): ?>
+<?php #var_dump ($this->users);  exit?>
+                <tr>
+                    <td class="col-md-1"><?= $i ?></td>
+                    <td class="col-md-3"><?= $entry['username'] ?></td>
+                    <td class="col-md-3"><?= $entry['email'] ?></td>
+                    <td class="col-md-2">
+             <?php if ($entry['status'] == '1') {
+    echo 'active';
+} else {
+    echo 'inactive';
+}?></td>
+                </tr>
+            <?php ++$i; ?>
+            <?php endforeach ?>
+            </table>
+            
+        <h2>Users: (<?= $this->pagination['total'] ?>)</h2>
+        <div>
+            <?php if (!$this->pagination['is_first_page']): ?>
+                <a href="<?= changePage("/home/users", $this->pagination['current_page'] - 1) ?>">Previous</a>
+            <?php endif; ?>
+            
+			<?php #var_dump ($this->pagination['pages']); exit; ?>
+            <?php foreach(range(1, $this->pagination['pages']) as $i): ?>
+                <?php if ($i == $this->pagination['current_page']): ?>
+                    <?= $i ?>
+                <?php else: ?>
+                    <a href="<?= changePage("/home/users", $i) ?>"><?= $i ?></a>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            
+            <?php if (!$this->pagination['is_last_page']): ?>
+                <a href="<?= changePage("/home/users", $this->pagination['current_page'] + 1) ?>">Next</a>
+            <?php endif; ?>
+        </div>
+        </div>
+</div> <!-- end of container -->
