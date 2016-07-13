@@ -15,7 +15,7 @@ class UserController extends Zend_Controller_Action
 					->setIntegrityCheck(false)
 					->from('user_sessions')
 					->columns(['session_info']);
-		$query->where('user_id = ?', 1);  # 1 should b changed to session->userId /$_SESSION['userId']
+		$query->where('user_id = ?', 1);  # 1 HardCoded should b changed to session->userId /$_SESSION['userId']
 		$result  = $savedSession->fetchRow($query);
 		$decoded = json_decode($result->session_info);
 		        
@@ -29,11 +29,8 @@ class UserController extends Zend_Controller_Action
             $status = $request->getParam('status', $session->status);
         }
         
-
-        
         //SAVING SESSION INFO INTO DB AS WELL
-			//should use encoding
-		
+				//should use encoding to keep the previous data form for session information in the db table
 		//$userSession = new Application_Model_DbTable_UserSession();
 		//$addNewSessionInfo = $cityTable->fetchNew();
 		//$addNewSessionInfo->user = $user;
@@ -44,7 +41,6 @@ class UserController extends Zend_Controller_Action
         //----------------------------------
         
 		$usersAndPages = $this->SeachUsers($user, $email, $status);
-		
 		$this->view->users = $usersAndPages['users'];
 		$this->view->username = $user;
 		$this->view->email = $email;

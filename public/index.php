@@ -71,6 +71,14 @@ $router->addRoute('home.users', new Zend_Controller_Router_Route(
 	)
 ));
 
+$router->addRoute('home.login', new Zend_Controller_Router_Route(
+	'/home/login',
+	array(
+		'controller' => 'login',
+		'action' => 'loginpage'
+	)
+));
+
 function changeQueryString($name, $value)
 {
     parse_str($_SERVER['QUERY_STRING'], $temporary);
