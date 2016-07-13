@@ -63,5 +63,25 @@ $router->addRoute('home.search', new Zend_Controller_Router_Route(
 	)
 ));
 
+$router->addRoute('home.users', new Zend_Controller_Router_Route(
+	'/home/users',
+	array(
+		'controller' => 'user',
+		'action' => 'list'
+	)
+));
+
+function changeQueryString($name, $value)
+{
+    parse_str($_SERVER['QUERY_STRING'], $temporary);
+    $temporary[$name] = $value;
+    return http_build_query($temporary);
+}
+
+function changePage($base, $target_page)
+{
+    return $base . "?" . changeQueryString('pn', $target_page);
+}
+
 $application->bootstrap()
             ->run();
