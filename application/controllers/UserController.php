@@ -8,6 +8,7 @@ class UserController extends Zend_Controller_Action
 		
 		$request = $this->getRequest();
 		$session = new Zend_Session_Namespace('user_session');
+		$currentUserId  = $session->userid;
 		
         //BRING IN SESSION INFO FROM DB
 		$savedSession = new Application_Model_DbTable_UserSession();
@@ -15,7 +16,7 @@ class UserController extends Zend_Controller_Action
 					->setIntegrityCheck(false)
 					->from('user_sessions')
 					->columns(['session_info']);
-		$query->where('user_id = ?', 1);  # 1 HardCoded should b changed to session->userId /$_SESSION['userId']
+		$query->where('user_id = ?', $currentUserId); 
 		$result  = $savedSession->fetchRow($query);
 		$decoded = json_decode($result->session_info);
 		        
@@ -23,21 +24,35 @@ class UserController extends Zend_Controller_Action
             $user = $request->getParam('username', $decoded->user);
             $email = $request->getParam('email',$decoded->email);
             $status = $request->getParam('status',$decoded->status);
+			
+			$session->user= $decoded->user;
+			$session->email = $decoded->email;
+			$session->status = $decoded->status;
         } else {
             $user = $request->getParam('username', $session->user);
             $email = $request->getParam('email', $session->email);
             $status = $request->getParam('status', $session->status);
+			
+			$session->user= $user;
+			$session->email = $email;
+			$session->status =$status;
         }
         
         //SAVING SESSION INFO INTO DB AS WELL
-				//should use encoding to keep the previous data form for session information in the db table
-		//$userSession = new Application_Model_DbTable_UserSession();
-		//$addNewSessionInfo = $cityTable->fetchNew();
-		//$addNewSessionInfo->user = $user;
-		//$addNewSessionInfo->email = $email;
-		//$addNewSessionInfo->status = $status;
-		//$addNewSessionInfo->save();
-		//
+
+		$session_model = new Application_Model_DbTable_UserSession;
+		$checkQuery =  $session_model->select()
+			->from ('user_sessions');
+		$checkQuery->where('user_id = ?', $currentUserId);
+		$logged_session_info = $session_model->fetchRow($checkQuery);
+		if ($logged_session_info){
+			//update user's sesssion info
+			$fields = [];
+			$fields = ['user' => $user, 'email'=> $email, 'status' => $status];
+			$data = array('session_info'=> json_encode($fields) );
+			$where = $session_model->getAdapter()->quoteInto('user_id = ?', "$currentUserId");
+			$session_model->update($data, $where);
+		}
         //----------------------------------
         
 		$usersAndPages = $this->SeachUsers($user, $email, $status);
