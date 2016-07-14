@@ -6,6 +6,7 @@ class HomeController extends Zend_Controller_Action
     public function init()
     {
         /* Initialize action controller here */
+
     }
 
     public function indexAction()
@@ -17,6 +18,7 @@ class HomeController extends Zend_Controller_Action
     'password' => 'IamGroot',
     'dbname'   => 'myDB'
     ));
+    
     
     $sql = 'Select * from county';
     $result = $db->fetchAll($sql);

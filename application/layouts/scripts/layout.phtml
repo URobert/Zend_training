@@ -73,7 +73,8 @@
             </button>
             <h3><a href="/home" id="R">Romania</a></h3>
           </div>
-<?php $isLoggedIn = 1; #this LINE WILL BE DELETED WHEN LOGGIN IN FUNCTIONALITY IS IMPLEMENTED?>
+<?php #$isLoggedIn = 1; #this LINE WILL BE DELETED WHEN LOGGIN IN FUNCTIONALITY IS IMPLEMENTED?>
+<?php $session = new Zend_Session_Namespace('user_session'); $isLoggedIn = $session->is_logged_in ; ?>
           <?php if ($isLoggedIn): ?>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
@@ -93,7 +94,7 @@
                     <a href="/home/users" id="users" class="navTop">Users</a></div>
                   </li>
                   <li><div class ="btn-group">
-                  <?php if (isset($_SESSION['userId'])): ?>
+                  <?php if ($session->userid): ?>
                     <a href="/home/logout" id="logut" class="navTop">Logout</a></div>
                   <?php else: ?>
                     <a href="/home/login" id="login" class="navTop">Login</a></div>
@@ -104,7 +105,6 @@
         <?php endif ?>
       </nav>
        </div> <!-- end of first container | end of navbar-->
-<?php #echo $content; ?>
        
 <?php echo $this->layout()->content; ?>
 </body>
