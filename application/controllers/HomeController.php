@@ -20,12 +20,12 @@ class HomeController extends Zend_Controller_Action
     ));
     
 //ENFORCE LOGIN PAGE
-$session = new Zend_Session_Namespace('user_session');
-$isLoggedIn = $session->is_logged_in;
-$uri = $this->getRequest()->getRequestUri();
-if (!$isLoggedIn && $uri !== '/home/login') {
-            header('Location: /home/login');
-}
+//$session = new Zend_Session_Namespace('user_session');
+//$isLoggedIn = $session->is_logged_in;
+//$uri = $this->getRequest()->getRequestUri();
+//if (!$isLoggedIn && $uri !== '/home/login') {
+//            header('Location: /home/login');
+//}
 //--------------------------------------------------- THIS WILL BE MOVED
     
     $sql = 'Select * from county';
