@@ -1,12 +1,18 @@
-<?php if (isset($_SESSION['message'])) {
-    echo $_SESSION['message'];
-} ?>
-<?php #usleep(1000); session_unset(); session_destroy(); ?>
+<!-- Global notification handling to use call flashMessenger action helper -->
+ <?php
+ 
+ if(isset($this->message)) :?>
+ <div class="notification">
+
+ <?php echo $this->message ;?>
+
+ </div>    
+<?php endif;?>
 
 <div class ="container container1">
     <div class="row">
         <div class="col-md-6 col-md-offset-5"><a href="/county/AddCounty" id="addCounty" class="btn btn-primary">Add new county</a></div>
-        <div class="col-md-10 col-md-offset-1">
+        <div class="col-md-8 col-md-offset-2">
             <table class="table table-bordered">
             <?php foreach ($this->result as $county): ?>
                 <tr>

@@ -2,27 +2,23 @@
 
 class CountyController extends Zend_Controller_Action
 {
-
     public function init()
     {
-        //Connect to db    
-        $db = new Zend_Db_Adapter_Pdo_Mysql(array(
-        'host'     => '127.0.0.1',
-        'username' => 'root',
-        'password' => 'IamGroot',
-        'dbname'   => 'myDB'
-        ));
-        
-        $sql = 'Select * from county';
-        $result = $db->fetchAll($sql);
-        $this->view->result = $result;
-        
-    }
 
+    $messages = $this->_helper->flashMessenger->getMessages();
+    if(!empty($messages))
+    $this->_helper->layout->getView()->message = $messages[0];
+    
+    }
+    
     public function indexAction()
     {
         
-    }
+    $table = new Application_Model_DbTable_County();
+    $result =  $table->fetchAll( $table->select()->from('county') );
+    $this->view->result = $result;
+
+    } 
     
     public function addcountyAction()
     {        
@@ -30,34 +26,34 @@ class CountyController extends Zend_Controller_Action
         $county = new Application_Model_DbTable_County;
         
         if ($this->getRequest()->isPost()) {
-            
         // TEST FIELDS FOR NON-EMPTY AND LENGTH
             if (!$countyName) {
-                echo '<script language="javascript">alert("County filed can not be empty.")</script>';
+                    $this->_helper->flashMessenger('County filed can not be empty.');
+                    $this->_helper->redirector('AddCounty');
             } else {
-                // REFACTOR INSERT QUERIES
                $checkCounty = $county->fetchRow(
                    $county->select()
                        ->where('name = ?', $countyName)
                );
                if ($checkCounty) {
-                    echo "<script>alert('County already exists in DB.')</script>";
+                    $this->_helper->flashMessenger('County already exists in DB.');
+                    $this->_helper->redirector('AddCounty');
                } else {
                     $addNewCounty = $county->fetchNew();
                     $addNewCounty->name = $countyName;
                     $addNewCounty->save();
-                    echo "<script>window.location.href='/home'</script>";
-                    $countyId = $addNewCounty->id;
+                    $countyId = $addNewCounty->id;                   
+                    header('Location: /home');
+                    exit;
                }
-            
            }
         }//end of POST method check
     }
     
     public function getCounty($id){
         $table = new Application_Model_DbTable_County();
-        $county =  $table->fetchRow(
-                    $table->select()
+        $county = $table->fetchRow(
+                  $table->select()
                         ->where('id = ?', $id)
                    );
         return $county;    
@@ -66,7 +62,6 @@ class CountyController extends Zend_Controller_Action
     public function editAction()
     {
         $request = $this->getRequest();
-        
         $id = (int) $request->get('id');
         $countyName = $this->getCounty($id)->name;
         
@@ -77,12 +72,8 @@ class CountyController extends Zend_Controller_Action
             $data = array('name' => "$countyName" );
             $where = $table->getAdapter()->quoteInto('id = ?', $id);
             $table->update($data, $where);
-            
-            echo "<script>
-            alert('County successfully updated.');
-            window.location.href='/home';
-            </script>";
-             
+            $this->_helper->flashMessenger('County updated.');
+            $this->_helper->redirector();
         }
         $this->view->countyName = $countyName;
     }
@@ -99,20 +90,14 @@ class CountyController extends Zend_Controller_Action
                 ->where('county_id = ?', $id)
         );
         if ($checkForCities) {
-            echo "<script>
-                alert('That county can not be deteled. Only empty (without registred cities) counties can be deleted.');
-                window.location.href='/home';
-                </script>";  
+            $this->_helper->flashMessenger('That county can not be deteled. Only empty (without registred cities) counties can be deleted.');
+            $this->_helper->redirector();
         }else{
             $table = new Application_Model_DbTable_County();
             $where = $table->getAdapter()->quoteInto('id = ?', $id);
             $table->delete($where);
-            echo "<script>
-                    alert('County deleted.');
-                    window.location.href='/home';
-                    </script>";
+            $this->_helper->flashMessenger(' County deleted !');
+            $this->_helper->redirector();
         }
-    }    
-    
-    
+    }   
 }// end of class

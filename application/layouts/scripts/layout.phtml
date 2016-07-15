@@ -1,3 +1,15 @@
+<!-- Global notification handling to use call flashMessenger action helper -->
+<?php if(isset($this->message)) :?>
+<div class="notification">
+
+<?php echo $this->message ;?>
+
+</div>    
+<?php endif;?>
+
+
+
+
 <?php echo $this->doctype() ?>
 <html>
     <head>
