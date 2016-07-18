@@ -38,12 +38,13 @@ class CityController extends Zend_Controller_Action
     
     public function currentweatherAction()
     {
-        //PAGE WAS BUILT IN JS, ALL CODE AVAILABLE IN VIEW
+        //PAGE WAS BUILT WITH JS, ALL CODE AVAILABLE IN VIEW
     }
     
     public function listAction()
     {
         $county_id = $this->getCountyId();
+        
         //GET LIST OF CITIES FROM A SPECIFIC COUNTY
         $cityTable = new Application_Model_DbTable_City();
         $checkForCities = $cityTable->fetchAll(
@@ -72,7 +73,6 @@ class CityController extends Zend_Controller_Action
         // TEST FIELDS FOR NON-EMPTY AND LENGTH
             if (!$cityName) {
                 $this->_helper->flashMessenger('City filed can not be empty.');
-                #$this->view->message = $this->_helper->flashMessenger->getMessages();
                 $this->_helper->redirector();
             } else {
                $checkCity = $cityTable->fetchRow(
@@ -81,7 +81,6 @@ class CityController extends Zend_Controller_Action
                );
 
                if (!is_null($checkCity)) {
-                    #echo "<script>alert('City already exists in DB.')</script>";
                 $this->_helper->flashMessenger('City already exists in DB.');
                 $this->_helper->redirector();
                } else {
@@ -89,8 +88,7 @@ class CityController extends Zend_Controller_Action
                     $addNewCity->name = $cityName;
                     $addNewCity->county_id = $county_id;
                     $addNewCity->save();
-               }
-            
+               }  
            }
         }//end of POST method check
     }
@@ -104,7 +102,6 @@ class CityController extends Zend_Controller_Action
         
         $this->_helper->flashMessenger('City deleted!');
         $this->_helper->redirector();
-
     }
     
     public function mapAction()
@@ -154,46 +151,40 @@ class CityController extends Zend_Controller_Action
     public function searchAction()
     {
 		$mapid = $this->getRequest()->mapid;
-        
         $listInDB = array();
         $searchTerm = $this->getRequest()->getPost('userSearch');
-        if (!null == $searchTerm) {
-            $realCities = new Application_Model_DbTable_City();
-            $result = $realCities->fetchAll(
-                  $realCities->select()
-                    ->where('name LIKE ?', $searchTerm)
-            );
+    
+        if ($this->getRequest()->isPost()){
+            if (!null == $searchTerm) {
+                $realCities = new Application_Model_DbTable_City();
+                $result = $realCities->fetchAll(
+                      $realCities->select()
+                        ->where('name LIKE ?', $searchTerm)
+                );
             
-
-            //foreach ($result as $city){
-            //    $listInDB [] = [ 'id' => $city[0]['id'], 'name' => $city[0]['name'] ];
-            //}
-            
-
-            
-            $this->view->mapid = $mapid;
-            $this->view->realCityList = $listInDB;
-            
-            #var_dump($result);
-            var_dump($mapid);
-            var_dump($listInDB);
+                foreach ($result as $city){
+                    $listInDB [] = [ 'id' => $city['id'], 'name' => $city['name'] ];
+                }
+            }
         }
-        //    $realCitites = \ORM::for_table('city')
-        //        ->select_many('id', 'name')
-        //        ->where_like('name', $request->get('userSearch'))
-        //        ->find_many();
-        //    foreach ($realCitites as $city) {
-        //        $listInDB [] = $city;
-        //    }
-        //}
-        //
-        //return $this->render(['mapid' => $request->get('mapid'), 'realCityList' => $listInDB]);
+        $this->view->mapid = $mapid;
+        $this->view->realCityList = $listInDB;
     }
     
-    
-    
+    public function mapcityAction()
+    {
+        echo 'I am runnig!';
+        $request = $this->getRequest();
+        $mapid = $request->get('mapid');
+        $targetid = $request->get('targetid');
+        
+        $table = new Application_Model_DbTable_CityMap();
+        $data = array('city_id' => $targetid );
+        $where = $table->getAdapter()->quoteInto('id = ?', $mapid);
+        $table->update($data, $where);
+        header('Location: http://example.local/cities/map');
+        exit;
+    }  
+}//end of CityController class
 
-    
-
-}
 

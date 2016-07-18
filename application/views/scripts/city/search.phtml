@@ -4,7 +4,7 @@
         margin-top: 50px;
     }
 </style>
-<form action="/city/search?mapid=<?= $this->mapid ?>" method=post>
+<form action="/city/search?mapid=<?= $this->mapid ?>" method="post">
     <p>Seach city:</p>
     <input type="text" name="userSearch"/>
     <input type="submit" value="Submit"/>
@@ -19,7 +19,7 @@
                 <tr>
                     <td class="col-md-1 success"><?= $city['name']?></td>
                     <td class="col-md-1 success">
-                        <form action="/city/map/success" method="get">
+                        <form action="/city/newmap/<?= $this->mapid ?>" method="post">
                             <input type='hidden' name='mapid' value='<?= $this->mapid ?>'/>
                             <input type='hidden' name='targetid' value='<?= $city['id']; ?>'/>
                             <input type='submit' value='MAP'/>
