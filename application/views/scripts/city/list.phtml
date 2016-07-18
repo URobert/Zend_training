@@ -1,4 +1,4 @@
-<a href="/city/addcity/<?=$this->county_id?>" id="addCity">Add new city</a>
+<a href="/city/addcity/county/<?=$this->county_id?>" id="addCity">Add new city</a>
 
 <table class="counties"  width="250px" border=1>
     <thead>
@@ -7,7 +7,7 @@
     <?php foreach ($this->cityList as $city): ?>
         <tr>
             <td><?= $city['name']?></td>
-            <td><a href="/city/delete/<?= $city['id'] ?>" id='<?php $city['id']?>'>X</a></td>
+            <td><a href="/city/delete/id/<?= $city['id'] ?>" id='<?php $city['id']?>'>X</a></td>
         </tr>
     <?php endforeach ?>
 </table>

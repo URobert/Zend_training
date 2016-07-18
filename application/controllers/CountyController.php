@@ -5,18 +5,19 @@ class CountyController extends Zend_Controller_Action
     public function init()
     {
 
-    $messages = $this->_helper->flashMessenger->getMessages();
-    if(!empty($messages))
-    $this->_helper->layout->getView()->message = $messages[0];
+        $messages = $this->_helper->flashMessenger->getMessages();
+        if(!empty($messages))
+        $this->_helper->layout->getView()->message = $messages[0];
     
     }
     
     public function indexAction()
     {
         
-    $table = new Application_Model_DbTable_County();
-    $result =  $table->fetchAll( $table->select()->from('county') );
-    $this->view->result = $result;
+        $table = new Application_Model_DbTable_County();
+        $result =  $table->fetchAll( $table->select()->from('county') );
+        $this->view->result = $result;
+        header( "refresh:5;url=http://weather.local/home" );
 
     } 
     

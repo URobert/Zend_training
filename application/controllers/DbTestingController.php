@@ -10,7 +10,6 @@ class DbTestingController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        // action body
     //Connect to db    
     $db = new Zend_Db_Adapter_Pdo_Mysql(array(
     'host'     => '127.0.0.1',

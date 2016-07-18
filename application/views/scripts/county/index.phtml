@@ -1,17 +1,18 @@
+<!-- Global notification handling to use call flashMessenger action helper -->
 <div class ="container container1">
     <div class="row">
         <div class="col-md-6 col-md-offset-5"><a href="/county/AddCounty" id="addCounty" class="btn btn-primary">Add new county</a></div>
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-8 col-md-offset-2">
             <table class="table table-bordered">
             <?php foreach ($this->result as $county): ?>
                 <tr>
                     <td class="col-md-4 inner"><a href="/county/edit/<?= $county['id'] ?>" id='<?php $county['id']?>'><?= $county['name']?></a></td>
-                    <td class="col-md-4 inner"><a href="/cities/<?= $county['id'] ?>" id='<?php $city['id']?>'>List of citites</a></td>
+                    <td class="col-md-4 inner"><a href="/city/list/county/<?= $county['id'] ?>" id='<?php $city['id']?>'>List of citites</a></td>
                     <td class="col-md-1 inner"><a href="/county/delete/<?= $county['id'] ?>" id='<?php $county['id']?>' class="btn btn-danger">Delete</a></td>
                 </tr>
             <?php endforeach ?>
             </table>
-        </div> <!-- end of row 
+        </div> <!-- end of row -->
     </div>
 </div> <!-- end of container -->
 
@@ -19,4 +20,10 @@
     #addCounty{
         margin-bottom: 20px;
     }
+    
+    body{
+        /*background-image: url('http://www.pixeden.com/media/k2/galleries/93/001-subtle-light-pattern-background-texture.jpg');*/
+        /*background: #E5E5E5;*/
+    }
 </style>
+    
