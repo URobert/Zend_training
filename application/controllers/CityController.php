@@ -147,7 +147,6 @@ class CityController extends Zend_Controller_Action
         $this->view->cityAndTemp = $cityAndTemp;
     }
     
-    
     public function searchAction()
     {
 		$mapid = $this->getRequest()->mapid;

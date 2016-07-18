@@ -39,7 +39,6 @@ class UserController extends Zend_Controller_Action
         }
         
         //SAVING SESSION INFO INTO DB AS WELL
-
 		$session_model = new Application_Model_DbTable_UserSession;
 		$checkQuery =  $session_model->select()
 			->from ('user_sessions');
@@ -53,7 +52,7 @@ class UserController extends Zend_Controller_Action
 			$where = $session_model->getAdapter()->quoteInto('user_id = ?', "$currentUserId");
 			$session_model->update($data, $where);
 		}
-        //----------------------------------
+        //------------------------------------------------------------------------------------
         
 		$usersAndPages = $this->SeachUsers($user, $email, $status);
 		$this->view->users = $usersAndPages['users'];

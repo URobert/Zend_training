@@ -11,14 +11,13 @@ class LoginController extends Zend_Controller_Action
 		
         if ($request->isPost()) {
             $user = $request->getParam('Username');
-			//Getting the hash from the DB
+			//GETTING THE HASH FROM THE DB
 			$user_model = new Application_Model_DbTable_User();
 			$query = $user_model->select()
 					->from('user')
 					->columns('password');
 			$query->where('username = ?', $user);
 			$password = $user_model->fetchAll($query)[0]['password'];
-			
 
 			if (password_verify($request->getParam('Password'), $password)){
 				$query =  $user_model->select()
@@ -43,15 +42,15 @@ class LoginController extends Zend_Controller_Action
 						//do nothing
 					}else{
 						//create user info in db
-                    $addNewUser = $session_model->fetchNew();
-                    $addNewUser->user_id = $currentUserId;
-                    $addNewUser->save();						
-					}
-					
-					//set session as logged in
-					$session->is_logged_in = true;
-					header('Location: /home');
-					exit;
+						$addNewUser = $session_model->fetchNew();
+						$addNewUser->user_id = $currentUserId;
+						$addNewUser->save();						
+						}
+						
+						//set session as logged in
+						$session->is_logged_in = true;
+						header('Location: /home');
+						exit;
 				}
 			}			
         }
@@ -65,4 +64,5 @@ class LoginController extends Zend_Controller_Action
         header('Location: /home/login');
         exit;
     }
+	
 }//end of LoginController class

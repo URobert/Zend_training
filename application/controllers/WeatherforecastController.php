@@ -7,14 +7,12 @@ class WeatherForecastController extends Zend_Controller_Action
 	public function listAction()
 	{
 		$request = $this->getRequest();
-		
 		$session = new Zend_Session_Namespace('weather_forecast');
 		
 		$county = $request->getParam('county', $session->county);
 		$city   = $request->getParam('city',   $session->city);
 		$from   = $request->getParam('from',   $session->from);
 		$to     = $request->getParam('to',     $session->to);
-		
 		
 		if ($request->isPost()) {
 			$session->county = $county;
@@ -49,7 +47,6 @@ class WeatherForecastController extends Zend_Controller_Action
             $query->where('date <= ?', $to);
 		}
 		
-		
 		$this->view->rows = $weather_model->fetchAll($query);
 		$this->view->county = $county;
 		$this->view->city = $city;
@@ -65,8 +62,7 @@ class WeatherForecastController extends Zend_Controller_Action
 		$citiesDB = $weather->fetchAll();
 		date_default_timezone_set('Europe/Bucharest');    
         $lastDateinDB =  date('Y-m-d',strtotime("+6 day"));		
-		foreach ($citiesDB as $city) {
-			
+		foreach ($citiesDB as $city) {	
 			$weather_model = new Application_Model_DbTable_CityMap();
 			$checkResult = $weather_model->fetchRow(
 				$weather_model->select()
@@ -78,7 +74,7 @@ class WeatherForecastController extends Zend_Controller_Action
 				);
 			
             if ($checkResult){
-                //skipping this particular city
+                //skipping this particular city (already exists)
             }else{
 				$weather_model = new Application_Model_DbTable_Weather();
 				$where = $weather_model->getAdapter()->quoteInto('city_id = ?', $city['city_id']);
@@ -87,7 +83,6 @@ class WeatherForecastController extends Zend_Controller_Action
                 //add to city list that will be called by the API
                 $cities [] = ['city_id' => $city['city_id'], 'name' => $city['name']];    
             }			
-#var_dump($cities);
 		}
 					
         //CALLING API
