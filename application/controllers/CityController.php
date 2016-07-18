@@ -173,7 +173,6 @@ class CityController extends Zend_Controller_Action
     
     public function mapcityAction()
     {
-        echo 'I am runnig!';
         $request = $this->getRequest();
         $mapid = $request->get('mapid');
         $targetid = $request->get('targetid');
@@ -182,7 +181,7 @@ class CityController extends Zend_Controller_Action
         $data = array('city_id' => $targetid );
         $where = $table->getAdapter()->quoteInto('id = ?', $mapid);
         $table->update($data, $where);
-        header('Location: http://example.local/cities/map');
+        header('Location: /city/map');
         exit;
     }  
 }//end of CityController class
