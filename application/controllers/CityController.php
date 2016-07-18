@@ -5,29 +5,26 @@ class CityController extends Zend_Controller_Action
 
     public function init()
     {
-    //Connect to db    
-    $db = new Zend_Db_Adapter_Pdo_Mysql(array(
-    'host'     => '127.0.0.1',
-    'username' => 'root',
-    'password' => 'IamGroot',
-    'dbname'   => 'myDB'
-    ));
-
+        
     }
     
     public function indexAction()
     {   
-
+        $messages = $this->_helper->flashMessenger->getMessages();
+        if(!empty($messages))
+        $this->_helper->layout->getView()->message = $messages[0];
+        $url = $_SERVER['HTTP_REFERER'];
+        header("refresh:2.5; url= $url");
     }
     
     public function getCounty($id)
     {
-    $table = new Application_Model_DbTable_County();
-    $county =  $table->fetchRow(
-                $table->select()
-                    ->where('id = ?', $id)
-               );
-    return $county;    
+        $table = new Application_Model_DbTable_County();
+        $county =  $table->fetchRow(
+                    $table->select()
+                        ->where('id = ?', $id)
+                   );
+        return $county;    
     }
     
     public function getCountyId()
@@ -35,19 +32,20 @@ class CityController extends Zend_Controller_Action
         //GET COUNTY ID
         $uri = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
         $stringResponse = explode("/",$uri);
-        $county_id = (int) $stringResponse[3];
+        $county_id = (int) $stringResponse[4];
         return $county_id;
     }
     
     public function currentweatherAction()
     {
-        //page built in JS, all code available in view
+        //PAGE WAS BUILT WITH JS, ALL CODE AVAILABLE IN VIEW
     }
     
     public function listAction()
     {
         $county_id = $this->getCountyId();
-        //GET LIST OF CITIES
+        
+        //GET LIST OF CITIES FROM A SPECIFIC COUNTY
         $cityTable = new Application_Model_DbTable_City();
         $checkForCities = $cityTable->fetchAll(
             $cityTable->select()
@@ -57,6 +55,7 @@ class CityController extends Zend_Controller_Action
         foreach ($checkForCities as $city) {
             $cityList [] = ['name' => $city->name, 'id' => $city->id];
         }
+        
         $this->view->cityList = $cityList;
         $this->view->county_id = $county_id;
     }
@@ -65,6 +64,7 @@ class CityController extends Zend_Controller_Action
     {
         $cityTable = new Application_Model_DbTable_City();
         $county_id = $this->getCountyId();
+        $params ['county'] = $county_id;
         $this->view->county_id = $county_id;
         $this->view->countyName = $this->getCounty($county_id)->name;
         
@@ -72,23 +72,23 @@ class CityController extends Zend_Controller_Action
             $cityName = $this->getRequest()->getPost('city');    
         // TEST FIELDS FOR NON-EMPTY AND LENGTH
             if (!$cityName) {
-                echo '<script language="javascript">alert("City filed can not be empty.")</script>';
+                $this->_helper->flashMessenger('City filed can not be empty.');
+                $this->_helper->redirector();
             } else {
-                // REFACTOR INSERT QUERIES
                $checkCity = $cityTable->fetchRow(
-                   $cityTable->select()
-                       ->where('name = ?', $cityName)
+                         $cityTable->select()
+                         ->where('name = ?', $cityName)
                );
 
                if (!is_null($checkCity)) {
-                    echo "<script>alert('City already exists in DB.')</script>";
+                $this->_helper->flashMessenger('City already exists in DB.');
+                $this->_helper->redirector();
                } else {
                     $addNewCity = $cityTable->fetchNew();
                     $addNewCity->name = $cityName;
                     $addNewCity->county_id = $county_id;
                     $addNewCity->save();
-               }
-            
+               }  
            }
         }//end of POST method check
     }
@@ -99,12 +99,9 @@ class CityController extends Zend_Controller_Action
         $cityTable = new Application_Model_DbTable_City();
         $where = $cityTable->getAdapter()->quoteInto('id = ?', $id);
         $cityTable->delete($where);
-
-        echo "<script>
-        alert('City deleted');
-        window.location.href='/home';
-        </script>";
-
+        
+        $this->_helper->flashMessenger('City deleted!');
+        $this->_helper->redirector();
     }
     
     public function mapAction()
@@ -150,50 +147,42 @@ class CityController extends Zend_Controller_Action
         $this->view->cityAndTemp = $cityAndTemp;
     }
     
-    
     public function searchAction()
     {
 		$mapid = $this->getRequest()->mapid;
-        
         $listInDB = array();
         $searchTerm = $this->getRequest()->getPost('userSearch');
-        if (!null == $searchTerm) {
-            $realCities = new Application_Model_DbTable_City();
-            $result = $realCities->fetchAll(
-                  $realCities->select()
-                    ->where('name LIKE ?', $searchTerm)
-            );
+    
+        if ($this->getRequest()->isPost()){
+            if (!null == $searchTerm) {
+                $realCities = new Application_Model_DbTable_City();
+                $result = $realCities->fetchAll(
+                      $realCities->select()
+                        ->where('name LIKE ?', $searchTerm)
+                );
             
-
-            //foreach ($result as $city){
-            //    $listInDB [] = [ 'id' => $city[0]['id'], 'name' => $city[0]['name'] ];
-            //}
-            
-
-            
-            $this->view->mapid = $mapid;
-            $this->view->realCityList = $listInDB;
-            
-            #var_dump($result);
-            var_dump($mapid);
-            var_dump($listInDB);
+                foreach ($result as $city){
+                    $listInDB [] = [ 'id' => $city['id'], 'name' => $city['name'] ];
+                }
+            }
         }
-        //    $realCitites = \ORM::for_table('city')
-        //        ->select_many('id', 'name')
-        //        ->where_like('name', $request->get('userSearch'))
-        //        ->find_many();
-        //    foreach ($realCitites as $city) {
-        //        $listInDB [] = $city;
-        //    }
-        //}
-        //
-        //return $this->render(['mapid' => $request->get('mapid'), 'realCityList' => $listInDB]);
+        $this->view->mapid = $mapid;
+        $this->view->realCityList = $listInDB;
     }
     
-    
-    
+    public function mapcityAction()
+    {
+        $request = $this->getRequest();
+        $mapid = $request->get('mapid');
+        $targetid = $request->get('targetid');
+        
+        $table = new Application_Model_DbTable_CityMap();
+        $data = array('city_id' => $targetid );
+        $where = $table->getAdapter()->quoteInto('id = ?', $mapid);
+        $table->update($data, $where);
+        header('Location: /city/map');
+        exit;
+    }  
+}//end of CityController class
 
-    
-
-}
 

@@ -55,6 +55,14 @@ $router->addRoute('city.search', new Zend_Controller_Router_Route(
 	)
 ));
 
+$router->addRoute('city.newmap', new Zend_Controller_Router_Route(
+	'/city/newmap/:mapid',
+	array(
+		'controller' => 'city',
+		'action' => 'mapcity'
+	)
+));
+
 $router->addRoute('home.search', new Zend_Controller_Router_Route(
 	'/home/search',
 	array(
@@ -84,6 +92,14 @@ $router->addRoute('home.logout', new Zend_Controller_Router_Route(
 	array(
 		'controller' => 'login',
 		'action' => 'logoutpage'
+	)
+));
+
+$router->addRoute('home.signup', new Zend_Controller_Router_Route(
+	'/home/signup',
+	array(
+		'controller' => 'signup',
+		'action' => 'signupform'
 	)
 ));
 

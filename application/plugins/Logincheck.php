@@ -4,8 +4,8 @@
 	{
 		public function preDispatch(Zend_Controller_Request_Abstract $request)
 		{		 
-			$controllerName = $request->getControllerName();
-			$actionName = $request->getActionName();
+			//$controllerName = $request->getControllerName();
+			//$actionName = $request->getActionName();
 			
 			//if ($controllerName == 'LoginController' &&
 			//	$actionName == 'loginpage'
@@ -18,7 +18,10 @@
 			$session = new Zend_Session_Namespace('user_session');
 			$isLoggedIn = $session->is_logged_in;
 			$uri = $this->getRequest()->getRequestUri();
-			if (!$isLoggedIn && $uri !== '/home/login') {
+			if (!$isLoggedIn &&
+					$uri !== '/home/login'&&
+					$uri !== '/home/signup'&&
+					$uri !== '/signup') {
 			            header('Location: /home/login');
 			}
 		}

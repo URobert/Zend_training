@@ -10,26 +10,21 @@ class DbTestingController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        // action body
-    //Connect to db    
-    $db = new Zend_Db_Adapter_Pdo_Mysql(array(
-    'host'     => '127.0.0.1',
-    'username' => 'root',
-    'password' => 'IamGroot',
-    'dbname'   => 'myDB'
-    ));
+        //Connect to db    
+        $db = new Zend_Db_Adapter_Pdo_Mysql(array(
+        'host'     => '127.0.0.1',
+        'username' => 'root',
+        'password' => 'IamGroot',
+        'dbname'   => 'myDB'
+        ));
+            
+        $tables =  $db->listTables();        
+        var_dump($tables);
+        echo "<br><br>";
         
-    $tables =  $db->listTables();        
-    var_dump($tables);
-    echo "<br><br>";
-    
-    $sql = 'Select * from county';
-    $result = $db->fetchAll($sql);
-    var_dump($result);
-    
-    
-    
+        $sql = 'Select * from county';
+        $result = $db->fetchAll($sql);
+        var_dump($result);
     }
     
-
 }
