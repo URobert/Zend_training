@@ -95,6 +95,14 @@ $router->addRoute('home.logout', new Zend_Controller_Router_Route(
 	)
 ));
 
+$router->addRoute('home.signup', new Zend_Controller_Router_Route(
+	'/home/signup',
+	array(
+		'controller' => 'signup',
+		'action' => 'signupform'
+	)
+));
+
 function changeQueryString($name, $value)
 {
     parse_str($_SERVER['QUERY_STRING'], $temporary);

@@ -7,8 +7,6 @@ class LoginController extends Zend_Controller_Action
 		$request = $this->getRequest();
 		$session = new Zend_Session_Namespace('user_session');
 		
-		
-		
         if ($request->isPost()) {
             $user = $request->getParam('Username');
 			//GETTING THE HASH FROM THE DB
@@ -46,7 +44,6 @@ class LoginController extends Zend_Controller_Action
 						$addNewUser->user_id = $currentUserId;
 						$addNewUser->save();						
 						}
-						
 						//set session as logged in
 						$session->is_logged_in = true;
 						header('Location: /home');
