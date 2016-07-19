@@ -31,6 +31,14 @@ $router->addRoute('county.edit', new Zend_Controller_Router_Route(
 		'action' => 'edit'
 	)
 ));
+$router->addRoute('county.delete', new Zend_Controller_Router_Route(
+	'county/delete/:id',
+	array(
+		'controller' => 'county',
+		'action' => 'delete'
+	)
+));
+
 $router->addRoute('weather.list', new Zend_Controller_Router_Route(
 	'city/weather',
 	array(
