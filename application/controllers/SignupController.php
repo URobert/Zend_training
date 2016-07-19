@@ -41,7 +41,6 @@ class SignupController extends Zend_Controller_Action
 				$addNewUser->user_id = $session->userid;
 				$addNewUser->save();
 
-				$fields = [];
 				$fields = ['user' => null, 'email'=> null, 'status' => null];
 				$data = array('session_info'=> json_encode($fields) );
 				$where = $session_model->getAdapter()->quoteInto('user_id = ?', $session->userid);

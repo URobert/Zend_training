@@ -38,8 +38,7 @@ class CountyController extends Zend_Controller_Action
                } else {
                     $addNewCounty = $county->fetchNew();
                     $addNewCounty->name = $countyName;
-                    $addNewCounty->save();
-                    $countyId = $addNewCounty->id;                   
+                    $addNewCounty->save();          
                     header('Location: /home');
                     exit;
                }
@@ -58,6 +57,7 @@ class CountyController extends Zend_Controller_Action
     
     public function editAction()
     {
+        //if id does not exist - redirect to list
         $request = $this->getRequest();
         $id = (int) $request->get('id');
         $countyName = $this->getCounty($id)->name;
@@ -66,7 +66,7 @@ class CountyController extends Zend_Controller_Action
         if ( $this->getRequest()->isPost() ) {
             $countyName = $request->getPost('name');
             $table = new Application_Model_DbTable_County();
-            $data = array('name' => "$countyName" );
+            $data = array('name' => $countyName );
             $where = $table->getAdapter()->quoteInto('id = ?', $id);
             $table->update($data, $where);
             $this->_helper->flashMessenger('County updated.');
@@ -77,6 +77,7 @@ class CountyController extends Zend_Controller_Action
     
     public function deleteAction()
     {
+        //get id from request, remove getAddapter
         $uri = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
         $stringResponse = explode("/",$uri);
         $id = (int) $stringResponse[3];

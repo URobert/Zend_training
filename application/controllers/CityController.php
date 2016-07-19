@@ -2,22 +2,15 @@
 
 class CityController extends Zend_Controller_Action
 {
-
-    public function init()
-    {
-        
-    }
     
-    public function indexAction()
+    public function init()
     {   
         $messages = $this->_helper->flashMessenger->getMessages();
         if(!empty($messages))
-        $this->_helper->layout->getView()->message = $messages[0];
-        $url = $_SERVER['HTTP_REFERER'];
-        header("refresh:2.5; url= $url");
+            $this->_helper->layout->getView()->message = $messages[0];
     }
     
-    public function getCounty($id)
+    private function getCounty($id)
     {
         $table = new Application_Model_DbTable_County();
         $county =  $table->fetchRow(
@@ -27,12 +20,11 @@ class CityController extends Zend_Controller_Action
         return $county;    
     }
     
-    public function getCountyId()
+    private function getCountyId()
     {
         //GET COUNTY ID
-        $uri = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
-        $stringResponse = explode("/",$uri);
-        $county_id = (int) $stringResponse[4];
+        $request = $this->getRequest();
+        $county_id = $request->county;
         return $county_id;
     }
     
@@ -43,28 +35,28 @@ class CityController extends Zend_Controller_Action
     
     public function listAction()
     {
-        $county_id = $this->getCountyId();
+		$session = new Zend_Session_Namespace('cityList');
+
+        if (!$session->county_id){
+            $session->county_id = $this->getCountyId();
+        }
         
         //GET LIST OF CITIES FROM A SPECIFIC COUNTY
         $cityTable = new Application_Model_DbTable_City();
         $checkForCities = $cityTable->fetchAll(
             $cityTable->select()
-                ->where('county_id = ?', $county_id)
+                ->where('county_id = ?', $session->county_id)
         );
         
-        foreach ($checkForCities as $city) {
-            $cityList [] = ['name' => $city->name, 'id' => $city->id];
-        }
+        $this->view->cityList = $checkForCities;        
+        $this->view->county_id = $session->county_id;
         
-        $this->view->cityList = $cityList;
-        $this->view->county_id = $county_id;
     }
 
     public function addcityAction()
     {
         $cityTable = new Application_Model_DbTable_City();
         $county_id = $this->getCountyId();
-        $params ['county'] = $county_id;
         $this->view->county_id = $county_id;
         $this->view->countyName = $this->getCounty($county_id)->name;
         
@@ -95,19 +87,23 @@ class CityController extends Zend_Controller_Action
     
     public function deleteAction()
     {
-        $id= $this->getCountyId();        
-        $cityTable = new Application_Model_DbTable_City();
-        $where = $cityTable->getAdapter()->quoteInto('id = ?', $id);
-        $cityTable->delete($where);
+        $request = $this->getRequest();
+        $id = $request->id;
+        $table = new Application_Model_DbTable_City();
+        $city =  $table->fetchRow(
+                    $table->select()
+                        ->where('id = ?', $id)
+                   );
+        $city->delete();
         
         $this->_helper->flashMessenger('City deleted!');
-        $this->_helper->redirector();
+        $this->_redirect("/city/list/county/$id");
     }
     
     public function mapAction()
     {
         //PICK LIST OF CITIES TO CHECK WITH THE API
-        $listofCities [] = ['Oradea', 'Beius', 'Alesd', 'Nucet', 'Brasov', 'Bucuresti', 'London', 'Timisoara'];
+        $listofCities = ['Oradea', 'Beius', 'Alesd', 'Nucet', 'Brasov', 'Bucuresti', 'London', 'Timisoara'];
         $appId = '01ffc2b8227e5302ffa7f8555ba7738e';
         $cityAndTemp = array();
 
@@ -117,7 +113,7 @@ class CityController extends Zend_Controller_Action
         foreach ($result as $row) {
             $listInDB [] = $row['name'];
         }
-        $diffToImport = array_diff($listofCities[0], $listInDB);
+        $diffToImport = array_diff($listofCities, $listInDB);
         
         foreach ($diffToImport as $city) {
         $cityTable = new Application_Model_DbTable_City();        
@@ -156,14 +152,10 @@ class CityController extends Zend_Controller_Action
         if ($this->getRequest()->isPost()){
             if (!null == $searchTerm) {
                 $realCities = new Application_Model_DbTable_City();
-                $result = $realCities->fetchAll(
+                $listInDB = $realCities->fetchAll(
                       $realCities->select()
                         ->where('name LIKE ?', $searchTerm)
                 );
-            
-                foreach ($result as $city){
-                    $listInDB [] = [ 'id' => $city['id'], 'name' => $city['name'] ];
-                }
             }
         }
         $this->view->mapid = $mapid;
@@ -180,8 +172,12 @@ class CityController extends Zend_Controller_Action
         $data = array('city_id' => $targetid );
         $where = $table->getAdapter()->quoteInto('id = ?', $mapid);
         $table->update($data, $where);
-        header('Location: /city/map');
-        exit;
+        //$city_map = $table->fetchRow(
+        //                $table->select()
+        //                        ->where('id = ?', $mapid)
+        //    );
+        //$city_map->update();
+        $this->_redirect('/city/map');
     }  
 }//end of CityController class
 

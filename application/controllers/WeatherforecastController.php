@@ -56,6 +56,7 @@ class WeatherForecastController extends Zend_Controller_Action
 	
 	public function importAction ()
 	{
+		//move date_dafault timezone to php.ini
 		//GET LIST OF CITIES FOR WEATHER REPORT
 		$cities = [];
 		$weather = new Application_Model_DbTable_CityMap();
@@ -103,6 +104,7 @@ class WeatherForecastController extends Zend_Controller_Action
                     $addNewValue->humidity = $response['list'][$i]['humidity'];
                     $addNewValue->wind = $response['list'][$i]['speed'];
                     $addNewValue->save();
+					//use one variable fro $respoonse['list'][$i];
             }
         }
 	}

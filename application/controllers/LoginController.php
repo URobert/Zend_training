@@ -4,6 +4,7 @@ class LoginController extends Zend_Controller_Action
 {
 	public function loginpageAction()
 	{
+		//sigle fetch row for all variables
 		$request = $this->getRequest();
 		$session = new Zend_Session_Namespace('user_session');
 		
