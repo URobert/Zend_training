@@ -1,6 +1,6 @@
 <?php
 
-class HomeController extends Zend_Controller_Action
+class HomeController extends CustomClass
 {
 
     public function init()

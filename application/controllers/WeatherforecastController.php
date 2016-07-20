@@ -1,8 +1,7 @@
 <?php
 
-class WeatherForecastController extends Zend_Controller_Action
+class WeatherForecastController extends CustomClass
 {
-	
 	
 	public function listAction()
 	{

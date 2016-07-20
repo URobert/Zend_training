@@ -1,14 +1,7 @@
 <?php
 
-class SearchLocationController extends Zend_Controller_Action
+class SearchLocationController extends CustomClass
 {
-	public function init()
-    {   
-        $messages = $this->_helper->flashMessenger->getMessages();
-        if(!empty($messages))
-            $this->_helper->layout->getView()->message = $messages[0];
-    }
-	
 	
 	public function searchAction()
     {
