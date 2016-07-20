@@ -73,9 +73,13 @@ class CountyController extends Zend_Controller_Action
         if ( $this->getRequest()->isPost() ) {
             $countyName = $request->getPost('name');
             $table = new Application_Model_DbTable_County();
-            $data = array('name' => $countyName );
-            $where = $table->getAdapter()->quoteInto('id = ?', $id);
-            $table->update($data, $where);
+            $county = $table->fetchRow(
+                       $table->select()
+                               ->where('id = ?', $id)
+                      );
+            $county->name = $countyName;
+            $county->save();
+            
             $this->_helper->flashMessenger('County updated.');
             $this->_helper->redirector();
         }
@@ -84,7 +88,6 @@ class CountyController extends Zend_Controller_Action
     
     public function deleteAction()
     {
-        //get id from request, remove getAddapter
         $request = $this->getRequest();
         $id = $request->id;
                 

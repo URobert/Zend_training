@@ -169,14 +169,17 @@ class CityController extends Zend_Controller_Action
         $targetid = $request->get('targetid');
         
         $table = new Application_Model_DbTable_CityMap();
-        $data = array('city_id' => $targetid );
-        $where = $table->getAdapter()->quoteInto('id = ?', $mapid);
-        $table->update($data, $where);
-        //$city_map = $table->fetchRow(
-        //                $table->select()
-        //                        ->where('id = ?', $mapid)
-        //    );
-        //$city_map->update();
+        $city_map = $table->fetchRow(
+                        $table->select()
+                                ->where('id = ?', $mapid)
+            );
+		if (!is_object($city_map)) {
+			// not found
+		}
+		
+        $city_map->city_id = $targetid;
+		$city_map->save();
+		
         $this->_redirect('/city/map');
     }  
 }//end of CityController class
