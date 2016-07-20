@@ -25,6 +25,7 @@ class SearchLocationController extends Zend_Controller_Action
 	
     public function searchHelp($searchTerm, $category)
     {
+		//
         $countiesAndCities = [];
 		$county_model = new Application_Model_DbTable_County();
 		$baseQuery =  $county_model->select()
@@ -38,12 +39,9 @@ class SearchLocationController extends Zend_Controller_Action
             $baseQuery->where("$category.name = ?", $searchTerm);
         }
 		
-		$results = $county_model->fetchAll( $baseQuery ) ;
-        if (!$results) {
-            echo 'No result was found.';
-        }
-        foreach ($results as $row) {
-            $countiesAndCities [] = $row;
+		$countiesAndCities = $county_model->fetchAll( $baseQuery ) ;
+        if (!$countiesAndCities) {
+            #echo 'No result was found.';
         }
 
         $this->view->countiesAndCities = $countiesAndCities;

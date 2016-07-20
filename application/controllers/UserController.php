@@ -46,7 +46,6 @@ class UserController extends Zend_Controller_Action
 		$logged_session_info = $session_model->fetchRow($checkQuery);
 		if ($logged_session_info){
 			//update user's sesssion info
-			$fields = [];
 			$fields = ['user' => $user, 'email'=> $email, 'status' => $status];
 			$data = array('session_info'=> json_encode($fields) );
 			$where = $session_model->getAdapter()->quoteInto('user_id = ?', "$currentUserId");

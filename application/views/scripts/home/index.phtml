@@ -21,6 +21,7 @@
                     <td class="col-md-1 inner"><a href="/county/delete/<?= $county['id'] ?>" id='<?php $county['id']?>' class="btn btn-danger">Delete</a></td>
                 </tr>
             <?php endforeach ?>
+                                <a href="/county/edit/<?= 9999 ?>" id='<?php 9999 ?>'><?= 'I do not exist'?></a>
             </table>
         </div> <!-- end of row -->
     </div>
@@ -32,8 +33,12 @@
     }
     
     body{
-        /*background-image: url('http://www.pixeden.com/media/k2/galleries/93/001-subtle-light-pattern-background-texture.jpg');*/
-        /*background: #E5E5E5;*/
+        /*background-image: url('https://images2.alphacoders.com/688/68870.jpg');*/
+        background-image: url("/images/mzkHacc.png");
+    }
+    
+    .table{
+        border: double;
     }
 </style>
     

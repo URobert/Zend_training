@@ -14,7 +14,6 @@ class CountyController extends Zend_Controller_Action
         $table = new Application_Model_DbTable_County();
         $result =  $table->fetchAll( $table->select()->from('county') );
         $this->view->result = $result;
-        header( "refresh:5;url=http://weather.local/home" );
     } 
     
     public function addcountyAction()
@@ -32,17 +31,15 @@ class CountyController extends Zend_Controller_Action
                    $county->select()
                        ->where('name = ?', $countyName)
                );
-               if ($checkCounty) {
+                if ($checkCounty) {
                     $this->_helper->flashMessenger('County already exists in DB.');
                     $this->_helper->redirector('AddCounty');
-               } else {
+                } else {
                     $addNewCounty = $county->fetchNew();
                     $addNewCounty->name = $countyName;
-                    $addNewCounty->save();
-                    $countyId = $addNewCounty->id;                   
-                    header('Location: /home');
-                    exit;
-               }
+                    $addNewCounty->save();          
+                    $this->_redirect('/home');
+                }
            }
         }//end of POST method check
     }
@@ -58,17 +55,31 @@ class CountyController extends Zend_Controller_Action
     
     public function editAction()
     {
+        //CHECK FOR NON EXISTENT IDs
         $request = $this->getRequest();
         $id = (int) $request->get('id');
-        $countyName = $this->getCounty($id)->name;
+        $county_model = new Application_Model_DbTable_County();
+        $checkQuery = $county_model->fetchRow(
+                        $county_model->select()
+                            ->where('id = ?', $id )
+            );
+        if (false == $checkQuery) {
+            $this->_helper->flashMessenger('That county does not exist.');
+            $this->_helper->redirector();
+        }
         
+        $countyName = $this->getCounty($id)->name;
         //UPDATE COUNTY NAME IN DB
         if ( $this->getRequest()->isPost() ) {
             $countyName = $request->getPost('name');
             $table = new Application_Model_DbTable_County();
-            $data = array('name' => "$countyName" );
-            $where = $table->getAdapter()->quoteInto('id = ?', $id);
-            $table->update($data, $where);
+            $county = $table->fetchRow(
+                       $table->select()
+                               ->where('id = ?', $id)
+                      );
+            $county->name = $countyName;
+            $county->save();
+            
             $this->_helper->flashMessenger('County updated.');
             $this->_helper->redirector();
         }
@@ -77,9 +88,8 @@ class CountyController extends Zend_Controller_Action
     
     public function deleteAction()
     {
-        $uri = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
-        $stringResponse = explode("/",$uri);
-        $id = (int) $stringResponse[3];
+        $request = $this->getRequest();
+        $id = $request->id;
                 
         $cityTable = new Application_Model_DbTable_City();
         $checkForCities = $cityTable->fetchRow(
@@ -91,8 +101,11 @@ class CountyController extends Zend_Controller_Action
             $this->_helper->redirector();
         }else{
             $table = new Application_Model_DbTable_County();
-            $where = $table->getAdapter()->quoteInto('id = ?', $id);
-            $table->delete($where);
+            $county = $table->fetchRow(
+                        $table->select()
+                                ->where ('id = ?', $id)
+            );
+            $county->delete();
             $this->_helper->flashMessenger(' County deleted !');
             $this->_helper->redirector();
         }
