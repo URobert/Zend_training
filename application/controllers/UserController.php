@@ -4,8 +4,7 @@ class UserController extends Zend_Controller_Action
 {
 	
     public function listAction()
-    {
-		
+    {	
 		$request = $this->getRequest();
 		$session = new Zend_Session_Namespace('user_session');
 		$currentUserId  = $session->userid;
@@ -41,15 +40,19 @@ class UserController extends Zend_Controller_Action
         //SAVING SESSION INFO INTO DB AS WELL
 		$session_model = new Application_Model_DbTable_UserSession;
 		$checkQuery =  $session_model->select()
-			->from ('user_sessions');
-		$checkQuery->where('user_id = ?', $currentUserId);
+									 ->from ('user_sessions')
+									 ->where('user_id = ?', $currentUserId);
 		$logged_session_info = $session_model->fetchRow($checkQuery);
+		
 		if ($logged_session_info){
 			//update user's sesssion info
 			$fields = ['user' => $user, 'email'=> $email, 'status' => $status];
-			$data = array('session_info'=> json_encode($fields) );
-			$where = $session_model->getAdapter()->quoteInto('user_id = ?', "$currentUserId");
-			$session_model->update($data, $where);
+			$userSession = $session_model->fetchRow(
+						   $session_model->select()
+										 ->where( 'user_id = ?', "$currentUserId" )
+			);
+			$userSession->session_info = json_encode($fields);
+			$userSession->save();	
 		}
         //------------------------------------------------------------------------------------
         
@@ -61,7 +64,7 @@ class UserController extends Zend_Controller_Action
 		$this->view->pagination = $usersAndPages['pagination'];
     }
 
-    public function SeachUsers($username, $email, $status)
+    private function SeachUsers($username, $email, $status)
     {
         $users = [];
         $user_model = new Application_Model_DbTable_User();
@@ -84,24 +87,19 @@ class UserController extends Zend_Controller_Action
             $sqlReq->where('email LIKE ?', "%$email%");
         }
         
-        $number_per_page = 3;
-        $current_page = isset($_GET['pn']) ? $_GET['pn'] : 1;
-	
+        $number_per_page = 5;
+        $request = $this->getRequest();
+		$current_page = null !== $request->getParam('pn') ? $request->getParam('pn') : 1;
         $total = $user_model->fetchAll($sqlReq)->count();
         $pages = ceil($total/$number_per_page);
         $is_first_page = $current_page == 1;
         $is_last_page  = $current_page == $pages;
 
         $sqlReq->limit($number_per_page, $number_per_page * ($current_page - 1));
-            
 		$result = $user_model->fetchAll($sqlReq);
 		
-        foreach ($result as $entry){
-            $users [] = $entry;
-        }
-		
         return [
-            'users' => $users,
+            'users' => $result,
             'pagination' => [
                 'total' => $total,
                 'pages' => $pages,
