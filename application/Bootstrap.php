@@ -13,6 +13,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     protected function _initAutoload()
     {
         require_once '/Users/robertuivarosi/Projects/Zend/weather/application/CustomClass.php';
+        require_once '/Users/robertuivarosi/Projects/Zend/weather/application/configs/acl.php';
     }
 
 }
