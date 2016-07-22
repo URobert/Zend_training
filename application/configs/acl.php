@@ -20,12 +20,14 @@ $acl->allow('member', null, array('edit'));
 //Admins inherits nothing, but is allowed all privileges
 $acl->allow('admin');
 
-        echo $acl->isAllowed('guest', null, 'view') ?
-     "allowed" : "denied";
-		echo "<br><br>";
-	 
-	    echo $acl->isAllowed('guest', null, 'edit') ?
-     "allowed" : "denied";
+//Testing permisions 
+
+//        echo $acl->isAllowed('guest', null, 'view') ?
+//     "allowed" : "denied";
+//		echo "<br><br>";
+//	 
+//	    echo $acl->isAllowed('guest', null, 'edit') ?
+//     "allowed" : "denied";
 		
 
 
