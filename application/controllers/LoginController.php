@@ -17,11 +17,13 @@ class LoginController extends CustomClass
 					->where('status = ?', 1);
 
 			$user = $user_model->fetchRow($query);
-
-			if (password_verify($request->getParam('Password'), $user->password)){
-				$session->userid = $user->id;
-				$session->is_logged_in = true;
-				$this->_redirect('/home');
+			
+			if ($user){
+				if (password_verify($request->getParam('Password'), $user->password)){
+					$session->userid = $user->id;
+					$session->is_logged_in = true;
+					$this->_redirect('/home');
+				}
 			}
         }
 	}

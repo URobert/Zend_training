@@ -88,9 +88,9 @@ class WeatherForecastController extends CustomClass
         foreach ($cities as $city) {
             $response = file_get_contents('http://api.openweathermap.org/data/2.5/forecast/daily?q='.$city['name'].'&mode=json&units=metric&cnt=7'.'&APPID='.$appId.'&units=metric');
             $response = json_decode($response, true);
-			$responseList = $response['list'][$i];
-            
+			
             for ($i = 0; $i < 7; ++$i) {
+					$responseList = $response['list'][$i];
 				    $addNewValue = $weather_model->fetchNew();
                     $addNewValue->city_id = $city['city_id'];
                     $addNewValue->date = gmdate("Y-m-d", $responseList['dt']);
