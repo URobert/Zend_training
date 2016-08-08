@@ -1,10 +1,9 @@
 <?php
 
-class LoginController extends Zend_Controller_Action
+class LoginController extends CustomClass
 {
 	public function loginpageAction()
 	{
-		//sigle fetch row for all variables
 		$request = $this->getRequest();
 		$session = new Zend_Session_Namespace('user_session');
 		
@@ -18,11 +17,13 @@ class LoginController extends Zend_Controller_Action
 					->where('status = ?', 1);
 
 			$user = $user_model->fetchRow($query);
-
-			if (password_verify($request->getParam('Password'), $user->password)){
-				$session->userid = $user->id;
-				$session->is_logged_in = true;
-				$this->_redirect('/home');
+			
+			if ($user){
+				if (password_verify($request->getParam('Password'), $user->password)){
+					$session->userid = $user->id;
+					$session->is_logged_in = true;
+					$this->_redirect('/home');
+				}
 			}
         }
 	}

@@ -1,16 +1,7 @@
 <?php
 
-class SignupController extends Zend_Controller_Action
-{
-	
-    public function indexAction()
-    {   
-        $messages = $this->_helper->flashMessenger->getMessages();
-        if(!empty($messages))
-        $this->_helper->layout->getView()->message = $messages[0];
-        header("refresh:2; url=/home/signup");
-    }
-	
+class SignupController extends CustomClass
+{	
     public function signupformAction()
     {
 		
@@ -42,26 +33,27 @@ class SignupController extends Zend_Controller_Action
 				$addNewUser->save();
 
 				$fields = ['user' => null, 'email'=> null, 'status' => null];
-				$data = array('session_info'=> json_encode($fields) );
-				$where = $session_model->getAdapter()->quoteInto('user_id = ?', $session->userid);
-				$session_model->update($data, $where);
+				$sessionUpdate = $session_model->fetchRow(
+									$session_model->select()
+													->where('user_id = ?', $session->userid)
+								);
+				$sessionUpdate->session_info = json_encode($fields);
+				$sessionUpdate->save();
 				
 				if ($status == 1) {
 					$session->is_logged_in = true;
-                    header('Location: /home');
-                    exit;
+                    $this->_redirect('/home');
                 } else {
                     $session->userid = '';
-                    header('Location: /home/logout');
-                    exit;
+                    $this->_redirect('/home/logout');
                 }
             } else {
                 if (strlen($request->get('password')) <= 3) {
                     $this->_helper->flashMessenger('Password is too short. Please retry.');
-					$this->_helper->redirector();
+					$this->_redirect('home/signup');
                 } else {
                     $this->_helper->flashMessenger('Passwords do not match.');
-					$this->_helper->redirector();
+					$this->_redirect('home/signup');
                 }
             }
         }

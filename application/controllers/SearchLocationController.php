@@ -1,11 +1,10 @@
 <?php
 
-class SearchLocationController extends Zend_Controller_Action
+class SearchLocationController extends CustomClass
 {
 	
 	public function searchAction()
     {
-	
 		$request = $this->getRequest();
 		$locations = new Zend_Session_Namespace('location_search');	
         $searchField = $request->getParam('userSearch', $locations->searchField);
@@ -23,9 +22,8 @@ class SearchLocationController extends Zend_Controller_Action
         $this->searchHelp($searchField, $category);
     }
 	
-    public function searchHelp($searchTerm, $category)
+    private function searchHelp($searchTerm, $category)
     {
-		//
         $countiesAndCities = [];
 		$county_model = new Application_Model_DbTable_County();
 		$baseQuery =  $county_model->select()
@@ -40,7 +38,8 @@ class SearchLocationController extends Zend_Controller_Action
         }
 		
 		$countiesAndCities = $county_model->fetchAll( $baseQuery ) ;
-        if (!$countiesAndCities) {
+		$search = $county_model->fetchRow($baseQuery);
+        if (!$search) {
             #echo 'No result was found.';
         }
 

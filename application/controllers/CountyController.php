@@ -1,14 +1,7 @@
 <?php
 
-class CountyController extends Zend_Controller_Action
-{
-    public function init()
-    {
-        $messages = $this->_helper->flashMessenger->getMessages();
-        if(!empty($messages))
-        $this->_helper->layout->getView()->message = $messages[0];
-    }
-    
+class CountyController extends CustomClass
+{ 
     public function indexAction()
     {   
         $table = new Application_Model_DbTable_County();

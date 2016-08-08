@@ -1,8 +1,7 @@
 <?php
 
-class WeatherForecastController extends Zend_Controller_Action
+class WeatherForecastController extends CustomClass
 {
-	
 	
 	public function listAction()
 	{
@@ -56,12 +55,10 @@ class WeatherForecastController extends Zend_Controller_Action
 	
 	public function importAction ()
 	{
-		//move date_dafault timezone to php.ini
 		//GET LIST OF CITIES FOR WEATHER REPORT
 		$cities = [];
 		$weather = new Application_Model_DbTable_CityMap();
-		$citiesDB = $weather->fetchAll();
-		date_default_timezone_set('Europe/Bucharest');    
+		$citiesDB = $weather->fetchAll(); 
         $lastDateinDB =  date('Y-m-d',strtotime("+6 day"));		
 		foreach ($citiesDB as $city) {	
 			$weather_model = new Application_Model_DbTable_CityMap();
@@ -74,16 +71,14 @@ class WeatherForecastController extends Zend_Controller_Action
 				->where('weather.date = ?', "$lastDateinDB")
 				);
 			
-            if ($checkResult){
-                //skipping this particular city (already exists)
-            }else{
+            if (!$checkResult){
 				$weather_model = new Application_Model_DbTable_Weather();
 				$where = $weather_model->getAdapter()->quoteInto('city_id = ?', $city['city_id']);
 				$weather_model->delete($where);
 				
                 //add to city list that will be called by the API
                 $cities [] = ['city_id' => $city['city_id'], 'name' => $city['name']];    
-            }			
+            }		
 		}
 					
         //CALLING API
@@ -93,18 +88,18 @@ class WeatherForecastController extends Zend_Controller_Action
         foreach ($cities as $city) {
             $response = file_get_contents('http://api.openweathermap.org/data/2.5/forecast/daily?q='.$city['name'].'&mode=json&units=metric&cnt=7'.'&APPID='.$appId.'&units=metric');
             $response = json_decode($response, true);
-            
+			
             for ($i = 0; $i < 7; ++$i) {
+					$responseList = $response['list'][$i];
 				    $addNewValue = $weather_model->fetchNew();
                     $addNewValue->city_id = $city['city_id'];
-                    $addNewValue->date = gmdate("Y-m-d",$response['list'][$i]['dt']);
-                    $addNewValue->temp = $response['list'][$i]['temp']['day'];
-                    $addNewValue->min_temp = $response['list'][$i]['temp']['min'];
-                    $addNewValue->max_temp =  $response['list'][$i]['temp']['max'];
-                    $addNewValue->humidity = $response['list'][$i]['humidity'];
-                    $addNewValue->wind = $response['list'][$i]['speed'];
+                    $addNewValue->date = gmdate("Y-m-d", $responseList['dt']);
+                    $addNewValue->temp = $responseList['temp']['day'];
+                    $addNewValue->min_temp = $responseList['temp']['min'];
+                    $addNewValue->max_temp =  $responseList['temp']['max'];
+                    $addNewValue->humidity = $responseList['humidity'];
+                    $addNewValue->wind = $responseList['speed'];
                     $addNewValue->save();
-					//use one variable fro $respoonse['list'][$i];
             }
         }
 	}
