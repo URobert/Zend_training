@@ -6,7 +6,7 @@
             <?php foreach ($this->result as $county): ?>
                 <tr>
                     <td class="col-md-4 inner"><a href="/county/edit/<?= $county['id'] ?>" id='<?php $county['id']?>'><?= $county['name']?></a></td>
-                    <td class="col-md-4 inner"><a href="/city/list/county/<?= $county['id'] ?>" id='<?php $city['id']?>'>List of citites</a></td>
+                    <td class="col-md-4 inner"><a href="/city/list/county/<?= $county['id'] ?>" >List of citites</a></td>
                     <td class="col-md-1 inner"><a href="/county/delete/<?= $county['id'] ?>" id='<?php $county['id']?>' class="btn btn-danger">Delete</a></td>
                 </tr>
             <?php endforeach ?>
@@ -22,8 +22,8 @@
     }
     
     body{
-        /*background-image: url('https://images2.alphacoders.com/688/68870.jpg');*/
-        background-image: url("/images/mzkHacc.png");
+        background-image: url("/images/ok2.jpg");
+        background-size: cover;
     }
     
     .table{
